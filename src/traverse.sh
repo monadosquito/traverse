@@ -28,6 +28,9 @@ noAmendedPathErr='<amended_repository_path> argument not passed'
 noFlagOrOptErr () {
     echo "$1 flag or option undefined"
 }
+iterMsg () {
+    echo "at '$1' in ${@:2}"
+}
 
 amendingPaths=()
 args=()
@@ -119,12 +122,14 @@ done
 cd "$initAmendedPath"
 for amendedSub in "${amendedSubs[@]}"
 do
+    smlrSubAmendingPaths=()
     for amendingPath in "${amendingPaths[@]}"
     do
         cd "$amendingPath"
         amendingHash=$(git log --grep="$pfx *$amendedSub" --pretty=%H -1)
         if [[ -n $amendingHash ]]
         then
+            smlrSubAmendingPaths+=("$amendingPath")
             git checkout --quiet $amendingHash
         fi
     done
@@ -143,6 +148,7 @@ do
     cd "$initAmendedPath"
     git add .
     git commit --amend --no-edit --quiet
+    iterMsg "$amendedSub" "${smlrSubAmendingPaths[@]}"
     if [[ $amendedSub == ${amendedSubs[-1]} ]]
     then
         git -c core.editor=true rebase --continue | sed '/^[.*,^[^ ].*/d'

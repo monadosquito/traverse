@@ -2,6 +2,11 @@
 
 ## Added
 
+- A current \<amended\_repository\_path\> commit subject
+without its \<prefix\> prefix
+and \<amending\_repository\_paths\> repositories
+sharing it are printed
+at each iteration.
 - Revisons can be traversed up to an older commit
 by passing its hash as a value of the `--keep` (`-k`) flag.
 - If a \<command\> command fails,
