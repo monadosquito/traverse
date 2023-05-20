@@ -119,6 +119,11 @@ do
     done
     cd "$initAmendedPath"
     "${cmdBits[@]}"
+    if (( $? > 0 ))
+    then
+        git rebase --abort
+        exit 1
+    fi
     for amendingPathIx in ${!amendingPaths[@]}
     do
         cd "${amendingPaths[$amendingPathIx]}"
