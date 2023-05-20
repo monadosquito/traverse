@@ -5,6 +5,7 @@ traverse
     [-h | --help]
     [-k | --keep <revision>]
     [-p | --prefix <prefix>]
+    [-q | --quiet]
     <amended_repository_path>
     -- {<amending_repository_path>...}
     -- <command>
@@ -22,7 +23,10 @@ execute a <command> command, and amend the former.
     a parent revision up to which to traverse a currently checked out revision
 
 -p, --prefix (feat.*:)
-    a subject pattern to select <amended_repository_path> commits by\
+    a subject pattern to select <amended_repository_path> commits by
+
+-q, --quiet (0)
+    whether to suppress output\
 "
 noAmendedPathErr='<amended_repository_path> argument not passed'
 noFlagOrOptErr () {
@@ -39,6 +43,8 @@ help=0
 pfx=feat.*:
 readAmendingPaths=0
 keep=$(git log --pretty=%h | tail -1)
+out=/dev/stdout
+quiet=0
 while (( $# > 0 ))
 do
     case $1 in
@@ -65,6 +71,11 @@ do
         -k | --keep)
             keep=$2
             shift
+            shift
+            ;;
+        -q | --quiet)
+            out=/dev/null
+            quiet=1
             shift
             ;;
         *)
@@ -148,10 +159,10 @@ do
     cd "$initAmendedPath"
     git add .
     git commit --amend --no-edit --quiet
-    iterMsg "$amendedSub" "${smlrSubAmendingPaths[@]}"
+    iterMsg "$amendedSub" "${smlrSubAmendingPaths[@]}" > $out
     if [[ $amendedSub == ${amendedSubs[-1]} ]]
     then
-        git -c core.editor=true rebase --continue | sed '/^[.*,^[^ ].*/d'
+        git -c core.editor=true rebase --continue | sed '/^[.*,^[^ ].*/d' > $out
         break
     fi
     git -c core.editor=true rebase --continue &> /dev/null

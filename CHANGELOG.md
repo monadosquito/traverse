@@ -2,6 +2,7 @@
 
 ## Added
 
+- Output can be suppressed by passing the `--quiet` (`-q`) flag.
 - A current \<amended\_repository\_path\> commit subject
 without its \<prefix\> prefix
 and \<amending\_repository\_paths\> repositories

@@ -7,6 +7,7 @@ traverse
     [-h | --help]
     [-k | --keep <revision>]
     [-p | --prefix <prefix>]
+    [-q | --quiet]
     <amended_repository_path>
     -- {<amending_repository_path>...}
     -- <command>
@@ -72,3 +73,4 @@ the flag and option descriptions
 |`-h`, `--help`  |`0`          |whether to print the help message and then exit                           |
 |`-k`, `--keep`  |\<root\>     |a parent revision up to which to traverse a currently checked out revision|
 |`-p`, `--prefix`|`feat.*:`    |a subject pattern to select \<amended\_repository\_path\> commits by      |
+|`-q`, `--quiet` |`0`          |whether to suppress output                                                |
