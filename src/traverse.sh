@@ -6,6 +6,7 @@ traverse
     [-k | --keep <revision>]
     [-p | --prefix <prefix>]
     [-q | --quiet]
+    [-v | --verbose]
     <amended_repository_path>
     -- {<amending_repository_path>...}
     -- <command>
@@ -26,7 +27,10 @@ execute a <command> command, and amend the former.
     a subject pattern to select <amended_repository_path> commits by
 
 -q, --quiet (0)
-    whether to suppress output\
+    whether to suppress output
+
+-v, --verbose (0)
+    whether to execute the git diff command at each iteration\
 "
 noAmendedPathErr='<amended_repository_path> argument not passed'
 noFlagOrOptErr () {
@@ -34,6 +38,10 @@ noFlagOrOptErr () {
 }
 iterMsg () {
     echo "at '$1' in ${@:2}"
+}
+verbIterMsg () {
+    bold=$(tput bold)
+    echo -e "$bold$(iterMsg $1 ${@:2})\n\n$(git diff --color)"
 }
 
 amendingPaths=()
@@ -45,6 +53,7 @@ readAmendingPaths=0
 keep=$(git log --pretty=%h | tail -1)
 out=/dev/stdout
 quiet=0
+vbs=0
 while (( $# > 0 ))
 do
     case $1 in
@@ -76,6 +85,11 @@ do
         -q | --quiet)
             out=/dev/null
             quiet=1
+            shift
+            ;;
+        -v | --verbose)
+            vbs=1
+            out=/dev/null
             shift
             ;;
         *)
@@ -157,6 +171,15 @@ do
         git checkout --quiet ${initAmendingSymRefs[$amendingPathIx]}
     done
     cd "$initAmendedPath"
+    if (( $vbs == 1 ))
+    then
+        echo -e \
+            "$(verbIterMsg \
+                   $amendedSub \
+                   ${smlrSubAmmendingPaths[@]}
+              )
+            "
+    fi
     git add .
     git commit --amend --no-edit --quiet
     iterMsg "$amendedSub" "${smlrSubAmendingPaths[@]}" > $out

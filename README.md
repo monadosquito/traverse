@@ -8,6 +8,7 @@ traverse
     [-k | --keep <revision>]
     [-p | --prefix <prefix>]
     [-q | --quiet]
+    [-v | --verbose]
     <amended_repository_path>
     -- {<amending_repository_path>...}
     -- <command>
@@ -68,9 +69,10 @@ followed by the [`bem` library](https://github.com/monadosquito/bem).
 
 the flag and option descriptions
 
-|Flag or option  |Default value|Description                                                               |
-|----------------|-------------|--------------------------------------------------------------------------|
-|`-h`, `--help`  |`0`          |whether to print the help message and then exit                           |
-|`-k`, `--keep`  |\<root\>     |a parent revision up to which to traverse a currently checked out revision|
-|`-p`, `--prefix`|`feat.*:`    |a subject pattern to select \<amended\_repository\_path\> commits by      |
-|`-q`, `--quiet` |`0`          |whether to suppress output                                                |
+|Flag or option   |Default value|Description                                                               |
+|-----------------|-------------|--------------------------------------------------------------------------|
+|`-h`, `--help`   |`0`          |whether to print the help message and then exit                           |
+|`-k`, `--keep`   |\<root\>     |a parent revision up to which to traverse a currently checked out revision|
+|`-p`, `--prefix` |`feat.*:   ` |a subject pattern to select \<amended\_repository\_path\> commits by      |
+|`-q`, `--quiet`  |`0`          |whether to suppress output                                                |
+|`-v`, `--verbose`|`0`          |whether to execute the `git diff` command at each iteration               |

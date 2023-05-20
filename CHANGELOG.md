@@ -2,6 +2,8 @@
 
 ## Added
 
+- The `git diff` command can be executed
+at each iteration by passing the `--verbose` (`-v`) flag
 - Output can be suppressed by passing the `--quiet` (`-q`) flag.
 - A current \<amended\_repository\_path\> commit subject
 without its \<prefix\> prefix
