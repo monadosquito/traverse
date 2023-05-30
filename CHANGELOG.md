@@ -2,6 +2,9 @@
 
 ## Added
 
+- The subject patterns to select \<amended\_repository\_path\>
+and \<amending\_repository\_paths\> commits by can differ
+by setting the later as a value of the `--amending-prefix` option.
 - If conflicts are occurred,
 then a patch of the commit causing them is chosen and modified
 by a \<command\> command invocation.

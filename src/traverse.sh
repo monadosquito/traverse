@@ -2,6 +2,7 @@ helpMsg="
 Traverse git repositories using a command.
 
 traverse
+    [--amending-prefix <amending_prefix>]
     [-h | --help]
     [-k | --keep <revision>]
     [-p | --prefix <prefix>]
@@ -16,6 +17,9 @@ that has a <prefix><body> subject \
 check out each <amending_repository_path> commit \
 whose subject contains a <body> substring, \
 execute a <command> command, and amend the former.
+
+--amending-prefix (feat.*:)
+    a subject pattern to select <amending_repository_paths> commits by
 
 -h, --help (0)
     whether to print the help message and then exit
@@ -47,13 +51,15 @@ verbIterMsg () {
 amendingPaths=()
 args=()
 cmdBits=()
+amendedPfx=feat.*:
 help=0
-pfx=feat.*:
 readAmendingPaths=0
 keep=$(git log --pretty=%h | tail -1)
 out=/dev/stdout
 quiet=0
 vbs=0
+amendingPfx=$amendedPfx
+amendingPfxPassed=0
 while (( $# > 0 ))
 do
     case $1 in
@@ -73,7 +79,11 @@ do
             exit
             ;;
         -p | --prefix)
-            pfx=$2
+            amendedPfx=$2
+            if (( $amendingPfxPassed == 0 ))
+            then
+                amendingPfx="$amendedPfx"
+            fi
             shift
             shift
             ;;
@@ -90,6 +100,12 @@ do
         -v | --verbose)
             vbs=1
             out=/dev/null
+            shift
+            ;;
+        --amending-prefix)
+            amendingPfx=$2
+            amendingPfxPassed=1
+            shift
             shift
             ;;
         *)
@@ -119,8 +135,8 @@ amendedPath=$1
 
 cd $amendedPath
 IFS=$'\n'
-amendedSubs=($(git log --reverse --grep="$pfx" --pretty=%s $keep.. \
-              | sed "s/$pfx *//g"
+amendedSubs=($(git log --reverse --grep="$amendedPfx" --pretty=%s $keep.. \
+              | sed "s/$amendedPfx *//g"
               )
             )
 unset $IFS
@@ -130,7 +146,7 @@ git \
             sed \
                 --in-place \
                 --regexp-extended \
-                '/$keep/,$ s/pick (.* $pfx.*)/edit \1/g'\
+                '/$keep/,$ s/pick (.* $amendedPfx.*)/edit \1/g'\
        " \
     rebase \
         --interactive \
@@ -152,7 +168,11 @@ do
     for amendingPath in "${amendingPaths[@]}"
     do
         cd "$amendingPath"
-        amendingHash=$(git log --grep="$pfx *$amendedSub" --pretty=%H -1)
+        amendingHash=$(git log \
+                           --grep="$amendingPfx *$amendedSub" \
+                           --pretty=%H \
+                           -1
+                      )
         if [[ -n $amendingHash ]]
         then
             smlrSubAmendingPaths+=("$amendingPath")
