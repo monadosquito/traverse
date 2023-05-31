@@ -2,6 +2,9 @@
 
 ## Added
 
+- If conflicts are occurred,
+then a patch of the commit causing them is chosen and modified
+by a \<command\> command invocation.
 - The `git diff` command can be executed
 at each iteration by passing the `--verbose` (`-v`) flag
 - Output can be suppressed by passing the `--quiet` (`-q`) flag.

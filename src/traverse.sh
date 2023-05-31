@@ -145,6 +145,7 @@ do
     initAmendingSymRefs+=($(git name-rev --name-only @))
 done
 cd "$initAmendedPath"
+conflWithPrevCmt=0
 for amendedSub in "${amendedSubs[@]}"
 do
     smlrSubAmendingPaths=()
@@ -159,6 +160,7 @@ do
         fi
     done
     cd "$initAmendedPath"
+    git checkout --theirs --quiet .
     "${cmdBits[@]}"
     if (( $? > 0 ))
     then
@@ -181,12 +183,16 @@ do
             "
     fi
     git add .
-    git commit --amend --no-edit --quiet
     iterMsg "$amendedSub" "${smlrSubAmendingPaths[@]}" > $out
     if [[ $amendedSub == ${amendedSubs[-1]} ]]
     then
         git -c core.editor=true rebase --continue | sed '/^[.*,^[^ ].*/d' > $out
         break
     fi
+    if (( $conflWithPrevCmt == 0 ))
+    then
+        git commit --amend --no-edit --quiet
+    fi
     git -c core.editor=true rebase --continue &> /dev/null
+    conflWithPrevCmt=$?
 done
