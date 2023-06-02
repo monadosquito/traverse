@@ -2,6 +2,7 @@
 
 ## Added
 
+- The revisions containing the commits having the same subject can be traversed.
 - The subject patterns to select \<amended\_repository\_path\>
 and \<amending\_repository\_paths\> commits by can differ
 by setting the later as a value of the `--amending-prefix` option.

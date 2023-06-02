@@ -162,21 +162,28 @@ do
 done
 cd "$initAmendedPath"
 conflWithPrevCmt=0
-for amendedSub in "${amendedSubs[@]}"
+for amendedSubIx in "${!amendedSubs[@]}"
 do
     smlrSubAmendingPaths=()
+    sameAmendedSubAheadNum=$(echo -e "${amendedSubs[*]:$amendedSubIx}" \
+                            | grep "${amendedSubs[$amendedSubIx]}" \
+                            | wc --lines
+                            )
     for amendingPath in "${amendingPaths[@]}"
     do
         cd "$amendingPath"
-        amendingHash=$(git log \
-                           --grep="$amendingPfx *$amendedSub" \
-                           --pretty=%H \
-                           -1
-                      )
-        if [[ -n $amendingHash ]]
+        amendingSubPtrn="$amendingPfx *${amendedSubs[$amendedSubIx]}"
+        amendingHashes=($(git log \
+                              --reverse \
+                              --grep="$amendingSubPtrn" \
+                              --pretty=%H
+                         )
+                       )
+        if (( ${#amendingHashes[@]} ))
         then
             smlrSubAmendingPaths+=("$amendingPath")
-            git checkout --quiet $amendingHash
+            amendingHashIx=$(( ${#amendingHashes[@]} - $sameAmendedSubAheadNum ))
+            git checkout --quiet ${amendingHashes[$amendingHashIx]}
         fi
     done
     cd "$initAmendedPath"
@@ -197,14 +204,14 @@ do
     then
         echo -e \
             "$(verbIterMsg \
-                   $amendedSub \
+                   ${amendedSubs[$amendedSubIx]} \
                    ${smlrSubAmmendingPaths[@]}
               )
             "
     fi
     git add .
-    iterMsg "$amendedSub" "${smlrSubAmendingPaths[@]}" > $out
-    if [[ $amendedSub == ${amendedSubs[-1]} ]]
+    iterMsg "${amendedSubs[$amendedSubIx]}" "${smlrSubAmendingPaths[@]}" > $out
+    if (( $amendedSubIx == ${#amendedSubs[@]} - 1 ))
     then
         git -c core.editor=true rebase --continue | sed '/^[.*,^[^ ].*/d' > $out
         break
