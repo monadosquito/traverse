@@ -129,7 +129,7 @@ do
     git commit --amend --no-edit --quiet
     if [[ $amendedSub == ${amendedSubs[-1]} ]]
     then
-        git -c core.editor=true rebase --continue
+        git -c core.editor=true rebase --continue | sed '/^[.*,^[^ ].*/d'
         break
     fi
     git -c core.editor=true rebase --continue &> /dev/null
