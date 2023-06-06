@@ -154,11 +154,16 @@ git \
         --strategy-option=theirs \
         &> /dev/null
 initAmendedPath=$(pwd)
-initAmendingSymRefs=()
+initAmendingRevs=()
 for amendingPath in "${amendingPaths[@]}"
 do
     cd "$amendingPath"
-    initAmendingSymRefs+=($(git name-rev --name-only @))
+    initAmendingRev=$(git name-rev --name-only @)
+    if [[ $initAmendingRev == undefined ]]
+    then
+        initAmendingRev=$(git rev-parse @)
+    fi
+    initAmendingRevs+=($initAmendingRev)
 done
 cd "$initAmendedPath"
 conflWithPrevCmt=0
@@ -197,7 +202,7 @@ do
     for amendingPathIx in ${!amendingPaths[@]}
     do
         cd "${amendingPaths[$amendingPathIx]}"
-        git checkout --quiet ${initAmendingSymRefs[$amendingPathIx]}
+        git checkout --quiet ${initAmendingRevs[$amendingPathIx]}
     done
     cd "$initAmendedPath"
     if (( $vbs == 1 ))

@@ -40,7 +40,7 @@ Follow the [`unpath` tool installation flow](https://github.com/monadosquito/unp
     and \<amending\_repository\_paths\> repositories
     using the `cd` command.
 2. Select \<amended\_repository\_path\>
-and \<amending\_repository\_paths\> branches to traverse
+and \<amending\_repository\_paths\> revisions to traverse
 using the `git checkout` command.
 
 ## Notes

@@ -1,7 +1,13 @@
 # [Unreleased]
 
+# [1.0.0] - 2023-06-30
+
 ## Added
 
+- \<amended\_repository\_path\>
+and \<amending\_repository\_paths\> repositories can be traversed
+when non-branch revisions are checked out
+in some \<amending\_repository\_paths\> repositories.
 - The revisions containing the commits having the same subject can be traversed.
 - The subject patterns to select \<amended\_repository\_path\>
 and \<amending\_repository\_paths\> commits by can differ
