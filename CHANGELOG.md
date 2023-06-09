@@ -2,6 +2,8 @@
 
 ## Added
 
+- Revisons can be traversed up to an older commit
+by passing its hash as a value of the `--keep` (`-k`) flag.
 - If a \<command\> command fails,
 then an \<amended\_repository\_path\> rebase is aborted.
 - An \<amended\_repository\_path\> repository can be traversed

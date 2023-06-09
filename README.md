@@ -5,6 +5,7 @@ Traverse git repositories using a command.
 ```bash
 traverse
     [-h | --help]
+    [-k | --keep <revision>]
     [-p | --prefix <prefix>]
     <amended_repository_path>
     -- {<amending_repository_path>...}
@@ -66,7 +67,8 @@ followed by the [`bem` library](https://github.com/monadosquito/bem).
 
 the flag and option descriptions
 
-|Flag or option  |Default value|Description                                                         |
-|----------------|-------------|--------------------------------------------------------------------|
-|`-h`, `--help`  |`0`          |whether to print the help message and then exit                     |
-|`-p`, `--prefix`|`feat.*:`    |a subject pattern to select \<amended\_repository\_path\> commits by|
+|Flag or option  |Default value|Description                                                               |
+|----------------|-------------|--------------------------------------------------------------------------|
+|`-h`, `--help`  |`0`          |whether to print the help message and then exit                           |
+|`-k`, `--keep`  |\<root\>     |a parent revision up to which to traverse a currently checked out revision|
+|`-p`, `--prefix`|`feat.*:`    |a subject pattern to select \<amended\_repository\_path\> commits by      |

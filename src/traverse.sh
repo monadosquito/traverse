@@ -3,6 +3,7 @@ Traverse git repositories using a command.
 
 traverse
     [-h | --help]
+    [-k | --keep <revision>]
     [-p | --prefix <prefix>]
     <amended_repository_path>
     -- {<amending_repository_path>...}
@@ -16,6 +17,9 @@ execute a <command> command, and amend the former.
 
 -h, --help (0)
     whether to print the help message and then exit
+
+-k, --keep (<root>)
+    a parent revision up to which to traverse a currently checked out revision
 
 -p, --prefix (feat.*:)
     a subject pattern to select <amended_repository_path> commits by\
@@ -31,6 +35,7 @@ cmdBits=()
 help=0
 pfx=feat.*:
 readAmendingPaths=0
+keep=$(git log --pretty=%h | tail -1)
 while (( $# > 0 ))
 do
     case $1 in
@@ -51,6 +56,11 @@ do
             ;;
         -p | --prefix)
             pfx=$2
+            shift
+            shift
+            ;;
+        -k | --keep)
+            keep=$2
             shift
             shift
             ;;
@@ -81,23 +91,24 @@ amendedPath=$1
 
 cd $amendedPath
 IFS=$'\n'
-amendedSubs=($(git log --reverse --grep="$pfx" --pretty=%s | sed "s/$pfx *//g"))
+amendedSubs=($(git log --reverse --grep="$pfx" --pretty=%s $keep.. \
+              | sed "s/$pfx *//g"
+              )
+            )
 unset $IFS
-
 git \
     -c "core.editor\
             =\
             sed \
                 --in-place \
                 --regexp-extended \
-                's/pick (.* $pfx.*)/edit \1/g'\
+                '/$keep/,$ s/pick (.* $pfx.*)/edit \1/g'\
        " \
     rebase \
         --interactive \
         --root \
         --strategy-option=theirs \
         &> /dev/null
-
 initAmendedPath=$(pwd)
 initAmendingSymRefs=()
 for amendingPath in "${amendingPaths[@]}"
